@@ -1,4 +1,4 @@
-package com.example.car_dealership;
+package com.hca.car_dealership;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.example.car_dealership;
+package com.hca.car_dealership;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

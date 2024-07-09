@@ -23,6 +23,7 @@ SET default_with_oids = false;
 
 DROP TABLE IF EXISTS financing CASCADE;
 DROP TABLE IF EXISTS sales_contracts CASCADE;
+DROP TABLE IF EXISTS lease_contracts CASCADE;
 DROP TABLE IF EXISTS customers CASCADE;
 DROP TABLE IF EXISTS inventory CASCADE;
 DROP TABLE IF EXISTS vehicles CASCADE;
@@ -94,6 +95,16 @@ CREATE TABLE sales_contracts (
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
 
+CREATE TABLE lease_contracts (
+                                 lease_id serial PRIMARY KEY,
+                                 vehicle_id int NOT NULL,
+                                 customer_id int NOT NULL,
+                                 monthly_price numeric(10, 2) NOT NULL,
+                                 end_date date NOT NULL,
+                                 start_date date NOT NULL,
+                                 FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id),
+                                 FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
 
 --
 --
@@ -138,6 +149,9 @@ INSERT INTO customers (name, address, phone, email) VALUES
 INSERT INTO sales_contracts (vehicle_id, customer_id, price, sale_date) VALUES
                                                                             (2, 2, 1500.00, '2023-06-01'),
                                                                             (4, 4, 2000.00, '2023-06-15');
+INSERT INTO lease_contracts (vehicle_id, customer_id, monthly_price, end_date, start_date)
+VALUES (1, 101, 1200.00, '2024-12-31', '2024-07-09');
+
 
 -- Insert fake data for financing
 INSERT INTO financing (sale_id, rate, term_length, monthly_payment) VALUES
