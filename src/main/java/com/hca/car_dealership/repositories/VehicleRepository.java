@@ -19,43 +19,62 @@ public class VehicleRepository {
     private DataSource dataSource;
 
     //get all vehicles
-    public List<Vehicle> getAllVehicles() {
-        //write your sql query
-        //open a connection to database
-        //we are going to prepare the query to be sent to SQL
-        //we will execute the query and get back a result set
-        //grab data column by column and put it into a new java object
-        //put it in a list
-        //at the end of the loop return the list
-        String query = "SELECT * FROM vehicles";
-        List<Vehicle> vehicles = new ArrayList<>();
+    public List<Vehicle> getAllVehicles(int dealershipId) {
+        String query = "SELECT * FROM vehicles " +
+                "JOIN inventory ON vehicles.vehicle_id = inventory.vehicle_id " +
+                "WHERE inventory.dealership_id = ?";
 
-        //try-with
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(query);
-            ResultSet rs = ps.executeQuery()){
-            while (rs.next()) {
-                // grab the data from the columns
-                Vehicle vehicle = mapRowToVehicle(rs);
-                vehicles.add(vehicle);
+        List<Vehicle> vehicles = new ArrayList<>();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, dealershipId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Vehicle vehicle = mapRowToVehicle(rs);
+                    vehicles.add(vehicle);
+                }
             }
-        }
-        catch(SQLException ex) {
-            ex.printStackTrace();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return vehicles;
-
     }
 
 
-    public List<Vehicle> getVehicleByPriceRange(double priceLow, double priceHigh) {
-        String query = "SELECT * FROM vehicles WHERE price >= ? AND price <= ?";
+    public List<Vehicle> getVehicleByPriceRange(double priceLow, double priceHigh, int dealership_id) {
+        String query = "SELECT * FROM vehicles " +
+                "JOIN inventory ON vehicles.vehicle_id = inventory.vehicle_id " +
+                "WHERE vehicles.price >= ? AND vehicles.price <= ? AND inventory.dealership_id = ?";
         List<Vehicle> vehicles = new ArrayList<>();
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             // replace question mark with value
             ps.setDouble(1, priceLow);
             ps.setDouble(2, priceHigh);
+            ps.setInt(3,dealership_id);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Vehicle vehicle = mapRowToVehicle(rs);
+                    vehicles.add(vehicle);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return vehicles;
+    }
+
+    public List<Vehicle> getVehicleByMileRange(double mileLow, double mileHigh) {
+        String query = "SELECT * FROM vehicles WHERE odometer >= ? AND odometer <= ?";
+        List<Vehicle> vehicles = new ArrayList<>();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            // replace question mark with value
+            ps.setDouble(1, mileLow);
+            ps.setDouble(2, mileHigh);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Vehicle vehicle = mapRowToVehicle(rs);
@@ -90,6 +109,48 @@ public class VehicleRepository {
         return vehicles;
     }
 
+
+    public List<Vehicle> getVehicleByColor(String color) {
+        String query = "SELECT * FROM vehicles WHERE color = ?";
+        List<Vehicle> vehicles = new ArrayList<>();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            // replace question mark with value
+            ps.setString(1, color);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Vehicle vehicle = mapRowToVehicle(rs);
+                    vehicles.add(vehicle);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return vehicles;
+    }
+
+    public List<Vehicle> getVehicleByType(String make, String model, String color) {
+        String query = "SELECT * FROM vehicles WHERE color = ?";
+        List<Vehicle> vehicles = new ArrayList<>();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            // replace question mark with value
+            ps.setString(1, make);
+            ps.setString(2, model);
+            ps.setString(3, color);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Vehicle vehicle = mapRowToVehicle(rs);
+                    vehicles.add(vehicle);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return vehicles;
+    }
 
     public void deleteVehicle(int id) throws SQLException {
         String query = "DELETE FROM vehicles WHERE vehicle_id = ?";
