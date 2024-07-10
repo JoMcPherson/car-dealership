@@ -48,6 +48,8 @@ CREATE TABLE dealerships (
 CREATE TABLE vehicles (
     vehicle_id serial PRIMARY KEY,
     vin varchar(17) NOT NULL,
+    price float NOT NULL,
+    odometer int NOT NULL,
     sold boolean NOT NULL DEFAULT false,
     make varchar(50) NOT NULL,
     model varchar(50) NOT NULL,
@@ -125,11 +127,11 @@ INSERT INTO dealerships (name, address, phone) VALUES
                                                    ('Trunchbull Auto', '456 Honey Ln, Crunchem Hall', '555-5678');
 
 -- Insert fake data for vehicles
-INSERT INTO vehicles (vin, sold, make, model, year, color) VALUES
-                                                               ('1HGCM82633A123456', false, 'Ford', 'Fiesta', 1997, 'Red'),
-                                                               ('1HGCM82633A654321', true, 'Chevrolet', 'Impala', 1998, 'Blue'),
-                                                               ('1HGCM82633A789012', false, 'Toyota', 'Corolla', 1999, 'Green'),
-                                                               ('1HGCM82633A345678', true, 'Honda', 'Civic', 2000, 'Black');
+INSERT INTO vehicles (vin, price, odometer, sold, make, model, year, color) VALUES
+                                                                                ('1HGCM82633A123456', 5000.00, 120000, false, 'Ford', 'Fiesta', 1997, 'Red'),
+                                                                                ('1HGCM82633A654321', 3000.00, 150000, true, 'Chevrolet', 'Impala', 1998, 'Blue'),
+                                                                                ('1HGCM82633A789012', 7000.00, 90000, false, 'Toyota', 'Corolla', 1999, 'Green'),
+                                                                                ('1HGCM82633A345678', 4500.00, 110000, true, 'Honda', 'Civic', 2000, 'Black');
 
 -- Insert fake data for inventory
 INSERT INTO inventory (dealership_id, vehicle_id) VALUES
@@ -150,7 +152,7 @@ INSERT INTO sales_contracts (vehicle_id, customer_id, price, sale_date) VALUES
                                                                             (2, 2, 1500.00, '2023-06-01'),
                                                                             (4, 4, 2000.00, '2023-06-15');
 INSERT INTO lease_contracts (vehicle_id, customer_id, monthly_price, end_date, start_date)
-VALUES (1, 101, 1200.00, '2024-12-31', '2024-07-09');
+VALUES (1, 1, 1200.00, '2024-12-31', '2024-07-09');
 
 
 -- Insert fake data for financing
